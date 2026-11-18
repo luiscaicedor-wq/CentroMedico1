@@ -36,6 +36,7 @@ public class MedicoInicioActivity extends AppCompatActivity {
         if (toolbarMedico != null) {
             toolbarMedico.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.menu_cerrar_sesion) {
+                    new SessionManager(this).cerrarSesion();
                     Intent intent = new Intent(MedicoInicioActivity.this, Login.class);
                     startActivity(intent);
                     finish();

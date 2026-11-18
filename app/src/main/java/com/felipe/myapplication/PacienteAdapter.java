@@ -3,6 +3,7 @@ package com.felipe.myapplication;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,13 +18,39 @@ public class PacienteAdapter extends RecyclerView.Adapter<PacienteAdapter.Pacien
         void onPacienteClick(Paciente paciente);
     }
 
+    public interface OnPacienteEditListener {
+        void onPacienteEdit(Paciente paciente);
+    }
+
+    public interface OnPacienteDeleteListener {
+        void onPacienteDelete(Paciente paciente);
+    }
+
     private final List<Paciente> listaCompleta = new ArrayList<>();
     private final List<Paciente> listaFiltrada = new ArrayList<>();
     private final OnPacienteClickListener listener;
+    private OnPacienteEditListener editListener;
+    private OnPacienteDeleteListener deleteListener;
 
     public PacienteAdapter(List<Paciente> pacientes, OnPacienteClickListener listener) {
         this.listener = listener;
         setPacientes(pacientes);
+    }
+
+    public PacienteAdapter(List<Paciente> pacientes, OnPacienteClickListener listener,
+                           OnPacienteEditListener editListener, OnPacienteDeleteListener deleteListener) {
+        this.listener = listener;
+        this.editListener = editListener;
+        this.deleteListener = deleteListener;
+        setPacientes(pacientes);
+    }
+
+    public void setOnPacienteEditListener(OnPacienteEditListener editListener) {
+        this.editListener = editListener;
+    }
+
+    public void setOnPacienteDeleteListener(OnPacienteDeleteListener deleteListener) {
+        this.deleteListener = deleteListener;
     }
 
     public void setPacientes(List<Paciente> pacientes) {
@@ -71,7 +98,7 @@ public class PacienteAdapter extends RecyclerView.Adapter<PacienteAdapter.Pacien
     @Override
     public void onBindViewHolder(@NonNull PacienteViewHolder holder, int position) {
         Paciente paciente = listaFiltrada.get(position);
-        holder.bind(paciente, listener);
+        holder.bind(paciente, listener, editListener, deleteListener);
     }
 
     @Override
@@ -83,15 +110,20 @@ public class PacienteAdapter extends RecyclerView.Adapter<PacienteAdapter.Pacien
         private final TextView tvAvatar;
         private final TextView tvItemPaciente;
         private final TextView tvItemHistoria;
+        private final ImageButton btnEditarPaciente;
+        private final ImageButton btnEliminarPaciente;
 
         public PacienteViewHolder(@NonNull View itemView) {
             super(itemView);
             tvAvatar = itemView.findViewById(R.id.tvAvatar);
             tvItemPaciente = itemView.findViewById(R.id.tvItemPaciente);
             tvItemHistoria = itemView.findViewById(R.id.tvItemHistoria);
+            btnEditarPaciente = itemView.findViewById(R.id.btnEditarPaciente);
+            btnEliminarPaciente = itemView.findViewById(R.id.btnEliminarPaciente);
         }
 
-        public void bind(Paciente p, OnPacienteClickListener listener) {
+        public void bind(Paciente p, OnPacienteClickListener listener,
+                         OnPacienteEditListener editListener, OnPacienteDeleteListener deleteListener) {
             if (p == null) return;
 
             if (tvAvatar != null) {
@@ -127,6 +159,22 @@ public class PacienteAdapter extends RecyclerView.Adapter<PacienteAdapter.Pacien
                     listener.onPacienteClick(p);
                 }
             });
+
+            if (btnEditarPaciente != null) {
+                btnEditarPaciente.setOnClickListener(v -> {
+                    if (editListener != null) {
+                        editListener.onPacienteEdit(p);
+                    }
+                });
+            }
+
+            if (btnEliminarPaciente != null) {
+                btnEliminarPaciente.setOnClickListener(v -> {
+                    if (deleteListener != null) {
+                        deleteListener.onPacienteDelete(p);
+                    }
+                });
+            }
         }
 
         private String obtenerIniciales(String nombre, String apellido) {

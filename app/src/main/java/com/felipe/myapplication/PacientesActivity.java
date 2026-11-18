@@ -6,11 +6,14 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton;
@@ -37,15 +40,19 @@ public class PacientesActivity extends AppCompatActivity {
     private ExtendedFloatingActionButton fabRegistrarPaciente;
     private BottomNavigationView bottomNav;
     private PacienteAdapter adapter;
+    private PacienteViewModel viewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_pacientes);
 
+        viewModel = new ViewModelProvider(this).get(PacienteViewModel.class);
+
         inicializarVistas();
         configurarToolbar();
         configurarRecyclerView();
+        observarViewModel();
         configurarEventos();
         configurarBottomNav();
     }
@@ -53,7 +60,9 @@ public class PacientesActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        actualizarLista();
+        if (viewModel != null) {
+            viewModel.cargarPacientes();
+        }
     }
 
     private void inicializarVistas() {
@@ -74,12 +83,67 @@ public class PacientesActivity extends AppCompatActivity {
     private void configurarRecyclerView() {
         if (rvPacientes != null) {
             rvPacientes.setLayoutManager(new LinearLayoutManager(this));
-            adapter = new PacienteAdapter(LISTA_PACIENTES, paciente -> {
-                Intent intent = new Intent(this, HistorialMedicoActivity.class);
-                startActivity(intent);
-            });
+            adapter = new PacienteAdapter(
+                    LISTA_PACIENTES,
+                    this::mostrarDetallePaciente,
+                    this::editarPaciente,
+                    this::confirmarEliminarPaciente
+            );
             rvPacientes.setAdapter(adapter);
         }
+    }
+
+    private void observarViewModel() {
+        if (viewModel != null) {
+            viewModel.getPacientesLiveData().observe(this, lista -> {
+                if (lista != null) {
+                    LISTA_PACIENTES.clear();
+                    LISTA_PACIENTES.addAll(lista);
+                    actualizarLista();
+                }
+            });
+        }
+    }
+
+    private void mostrarDetallePaciente(Paciente paciente) {
+        if (paciente == null) return;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle(paciente.getNombre() + " " + paciente.getApellido())
+                .setMessage("DNI: " + paciente.getIdentidad() + "\n" +
+                        "Historia Clínica: " + paciente.getNumeroHistoria() + "\n" +
+                        "Edad: " + paciente.getEdad() + " años\n" +
+                        "Nacionalidad: " + paciente.getNacionalidad() + "\n" +
+                        "Estatura: " + paciente.getEstatura() + " m")
+                .setPositiveButton("Ver Historial", (dialog, which) -> {
+                    Intent intent = new Intent(this, HistorialMedicoActivity.class);
+                    startActivity(intent);
+                })
+                .setNegativeButton("Cerrar", null)
+                .show();
+    }
+
+    private void editarPaciente(Paciente paciente) {
+        if (paciente == null) return;
+        Intent intent = new Intent(this, RegistrarPaciente.class);
+        intent.putExtra(RegistrarPaciente.EXTRA_PACIENTE_ID, paciente.getId());
+        startActivity(intent);
+    }
+
+    private void confirmarEliminarPaciente(Paciente paciente) {
+        if (paciente == null) return;
+        new MaterialAlertDialogBuilder(this)
+                .setTitle("Eliminar Paciente")
+                .setMessage("¿Estás seguro de que deseas eliminar a " + paciente.getNombre() + " " + paciente.getApellido() + "?")
+                .setPositiveButton("Eliminar", (dialog, which) -> {
+                    if (viewModel != null) {
+                        viewModel.eliminarPaciente(paciente.getId(), count -> {
+                            Toast.makeText(this, "Paciente eliminado", Toast.LENGTH_SHORT).show();
+                            viewModel.cargarPacientes();
+                        });
+                    }
+                })
+                .setNegativeButton("Cancelar", null)
+                .show();
     }
 
     private void actualizarLista() {

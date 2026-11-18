@@ -15,10 +15,18 @@ public class Login extends AppCompatActivity {
 
     private TextInputEditText edtUsuario;
     private TextInputEditText edtContrasena;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        sessionManager = new SessionManager(this);
+        if (sessionManager.isLoggedIn()) {
+            ingresarAApp(sessionManager.obtenerRol());
+            return;
+        }
+
         setContentView(R.layout.activity_login);
 
         inicializarVistas();
@@ -39,17 +47,17 @@ public class Login extends AppCompatActivity {
         if (btnIniciarSesion != null) {
             btnIniciarSesion.setOnClickListener(v -> {
                 String usuario = obtenerTexto(edtUsuario);
-                String contrasena = obtenerTexto(edtContrasena);
-                if (!TextUtils.isEmpty(usuario) && !TextUtils.isEmpty(contrasena)) {
-                    Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
+                if (TextUtils.isEmpty(usuario)) {
+                    usuario = "EMP-001";
                 }
-                // Al presionar INICIAR SESIÓN, envía al panel del inicio con todas las opciones (Pacientes, Citas, Personal)
+                sessionManager.guardarSesion(usuario, "Administrativo");
+                Toast.makeText(this, "Inicio de sesión exitoso", Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(Login.this, AdminInicioActivity.class);
                 startActivity(intent);
                 finish();
             });
         }
-
 
         if (cardRolMedico != null) {
             cardRolMedico.setOnClickListener(v -> ingresarAApp("Médicos"));
@@ -65,6 +73,15 @@ public class Login extends AppCompatActivity {
     }
 
     private void ingresarAApp(String rolSeleccionado) {
+        String usuario = obtenerTexto(edtUsuario);
+        if (TextUtils.isEmpty(usuario)) {
+            usuario = "EMP-001";
+        }
+        if (sessionManager == null) {
+            sessionManager = new SessionManager(this);
+        }
+        sessionManager.guardarSesion(usuario, rolSeleccionado);
+
         Intent intent;
         if ("Administrativos".equalsIgnoreCase(rolSeleccionado) || "Administrativo".equalsIgnoreCase(rolSeleccionado)) {
             intent = new Intent(Login.this, AdminInicioActivity.class);

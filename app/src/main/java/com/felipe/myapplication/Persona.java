@@ -1,6 +1,6 @@
 package com.felipe.myapplication;
 
-public class Persona {
+public class Persona implements IReportable {
     private String nombre;
     private String apellido;
     private String tipoIdentidad;
@@ -32,6 +32,7 @@ public class Persona {
 
     public void setNombre(String nombre) { this.nombre = nombre; }
     public void setApellidos(String apellido) { this.apellido = apellido; }
+    public void setApellido(String apellido) { this.apellido = apellido; }
     public void setTipoIdentidad(String tipoIdentidad) { this.tipoIdentidad = tipoIdentidad; }
     public void setIdentidad(String identidad) { this.identidad = identidad; }
     public void setEdad(int edad) { this.edad = edad; }
@@ -44,5 +45,15 @@ public class Persona {
 
     public void mostrarInformacion() {
         System.out.println(mostrarDatos());
+    }
+
+    @Override
+    public String generarReporteResumido() {
+        return nombre + " " + apellido + " (" + identidad + ")";
+    }
+
+    @Override
+    public String obtenerIdentificadorUnico() {
+        return identidad != null ? identidad : "N/A";
     }
 }

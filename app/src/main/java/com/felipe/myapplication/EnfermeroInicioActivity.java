@@ -54,6 +54,7 @@ public class EnfermeroInicioActivity extends AppCompatActivity {
         if (toolbarEnfermero != null) {
             toolbarEnfermero.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.menu_cerrar_sesion) {
+                    new SessionManager(this).cerrarSesion();
                     Intent intent = new Intent(EnfermeroInicioActivity.this, Login.class);
                     startActivity(intent);
                     finish();

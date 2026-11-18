@@ -57,5 +57,25 @@
                 tools:text="Historia: HC-2024-001 | DNI: 99887766D" />
         </LinearLayout>
 
+        <ImageButton
+            android:id="@+id/btnEditarPaciente"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Editar paciente"
+            android:padding="6dp"
+            android:src="@drawable/ic_edit"
+            app:tint="@color/cm_primario" />
+
+        <ImageButton
+            android:id="@+id/btnEliminarPaciente"
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:contentDescription="Eliminar paciente"
+            android:padding="6dp"
+            android:src="@drawable/ic_delete"
+            app:tint="#D32F2F" />
+
     </LinearLayout>
 </com.google.android.material.card.MaterialCardView>

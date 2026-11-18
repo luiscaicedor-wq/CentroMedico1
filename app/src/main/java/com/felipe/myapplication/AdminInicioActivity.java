@@ -58,6 +58,7 @@ public class AdminInicioActivity extends AppCompatActivity {
         if (toolbar != null) {
             toolbar.setOnMenuItemClickListener(item -> {
                 if (item.getItemId() == R.id.menu_cerrar_sesion) {
+                    new SessionManager(this).cerrarSesion();
                     Intent intent = new Intent(AdminInicioActivity.this, Login.class);
                     startActivity(intent);
                     finish();
