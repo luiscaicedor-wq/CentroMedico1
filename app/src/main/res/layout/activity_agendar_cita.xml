@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Administrativo.agendarCita(Paciente, Medico, String) + new Consulta(...) → CentroMedico.agendarConsulta(Consulta). etFecha abre MaterialDatePicker -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/cm_fondo"
+    android:orientation="vertical"
+    tools:context=".MainActivity">
+    <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="@color/cm_fondo"
+        app:title="Agendar cita"
+        app:navigationIcon="@drawable/ic_arrow_back"
+        app:navigationContentDescription="Volver" />
+
+    <FrameLayout android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        <androidx.core.widget.NestedScrollView android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+            <LinearLayout android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="16dp"
+                android:paddingTop="8dp"
+                android:paddingBottom="96dp"
+                android:divider="@drawable/espacio_12"
+                android:showDividers="middle">
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/tilPaciente"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Paciente">
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@+id/acPaciente"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        tools:text="Juan Pérez — HC-2024-001" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/tilMedico"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Médico">
+                    <com.google.android.material.textfield.MaterialAutoCompleteTextView android:id="@+id/acMedico"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        tools:text="Dra. Laura Gómez — Cardiología" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/tilFecha"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Fecha"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@drawable/ic_calendar"
+                    app:endIconContentDescription="Fecha">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/etFecha"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="false"
+                        android:clickable="true"
+                        tools:text="2025-09-10" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout android:id="@+id/tilMotivo"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Motivo de consulta">
+                    <com.google.android.material.textfield.TextInputEditText android:id="@+id/etMotivo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"
+                        tools:text="Dolor en el pecho" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.card.MaterialCardView android:id="@+id/cardResumenCita"
+                    style="@style/Widget.MaterialComponents.CardView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
+                    <LinearLayout android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp"
+                        android:divider="@drawable/espacio_8"
+                        android:showDividers="middle">
+                        <TextView android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Resumen"
+                            android:textAllCaps="true"
+                            android:textSize="12sp"
+                            android:textColor="@color/cm_texto_secundario" />
+
+                        <TextView android:id="@+id/tvResumenCita"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="16sp"
+                            tools:text="Juan Pérez con Laura Gómez" />
+
+                        <TextView android:id="@+id/tvResumenFechaMotivo"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:textSize="14sp"
+                            android:textColor="@color/cm_texto_secundario"
+                            tools:text="2025-09-10 · Dolor en el pecho" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <Space android:layout_width="match_parent"
+                    android:layout_height="16dp" />
+
+                <com.google.android.material.button.MaterialButton android:id="@+id/btnConfirmarCita"
+                    android:layout_width="match_parent"
+                    android:layout_height="56dp"
+                    android:text="Confirmar cita"
+                    app:icon="@drawable/ic_check" />
+            </LinearLayout>
+        </androidx.core.widget.NestedScrollView>
+    </FrameLayout>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:menu="@menu/menu_nav_admin"
+        app:labelVisibilityMode="labeled" />
+</LinearLayout>

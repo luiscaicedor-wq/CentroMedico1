@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Tema Institucional del Centro Médico (Azul Marino / Slate Teal) -->
+    <color name="cm_fondo">#F4F7F9</color>
+    <color name="cm_superficie">#FFFFFF</color>
+    <color name="cm_primario">#0F4C81</color>
+    <color name="cm_primario_contenedor">#E8F1F5</color>
+    <color name="cm_info">#0F4C81</color>
+    <color name="cm_info_contenedor">#E8F1F5</color>
+    <color name="cm_texto_principal">#18232B</color>
+    <color name="cm_texto_secundario">#52606D</color>
+    <color name="cm_borde">#D3DFE5</color>
+
+    <!-- Colores estándar del tema -->
+    <color name="my_light_primary">#0F4C81</color>
+    <color name="my_dark_primary">#85B6DF</color>
+</resources>

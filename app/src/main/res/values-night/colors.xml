@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tema Institucional del Centro Médico (Modo Oscuro) -->
+    <color name="cm_fondo">#111820</color>
+    <color name="cm_superficie">#1A242E</color>
+    <color name="cm_primario">#85B6DF</color>
+    <color name="cm_primario_contenedor">#072A4A</color>
+    <color name="cm_info">#85B6DF</color>
+    <color name="cm_info_contenedor">#072A4A</color>
+    <color name="cm_texto_principal">#E6EDF2</color>
+    <color name="cm_texto_secundario">#9CB0B9</color>
+    <color name="cm_borde">#2B3847</color>
+</resources>
