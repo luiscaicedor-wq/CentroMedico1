@@ -1,3 +1,12 @@
 <resources>
-    <string name="app_name">MyApplication</string>
+    <string name="app_name">Clínica San Rafael</string>
+    <string name="title_pacientes">Pacientes</string>
+    <string name="title_registrar_paciente">Registrar Paciente</string>
+    <string name="title_editar_paciente">Editar Paciente</string>
+    <string name="title_agendar_cita">Agendar Cita</string>
+    <string name="title_personal">Personal Médico</string>
+    <string name="btn_guardar">Guardar</string>
+    <string name="btn_cancelar">Cancelar</string>
+    <string name="btn_eliminar">Eliminar</string>
+    <string name="btn_editar">Editar</string>
 </resources>
