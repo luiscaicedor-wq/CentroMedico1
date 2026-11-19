@@ -108,4 +108,52 @@ public class DatabaseHelper extends SQLiteOpenHelper {
             }
         }
     }
+    // Guardar una consulta en SQLite
+    public long insertarConsulta(
+            String fecha,
+            String motivo,
+            String medico,
+            long pacienteId
+    ) {
+        SQLiteDatabase db = getWritableDatabase();
+
+        ContentValues values = new ContentValues();
+        values.put(COLUMN_CONSULTA_FECHA, fecha);
+        values.put(COLUMN_CONSULTA_MOTIVO, motivo);
+        values.put(COLUMN_CONSULTA_MEDICO, medico);
+        values.put(COLUMN_CONSULTA_PACIENTE_ID, pacienteId);
+
+        return db.insert(TABLE_CONSULTAS, null, values);
+    }
+
+    // Obtener las consultas registradas
+    public Cursor obtenerConsultas() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        return db.rawQuery(
+                "SELECT c.id, c.fecha, c.motivo, c.medico, " +
+                        "p.nombre || ' ' || p.apellido AS paciente " +
+                        "FROM " + TABLE_CONSULTAS + " c " +
+                        "INNER JOIN " + TABLE_PACIENTES + " p " +
+                        "ON c.paciente_id = p.id " +
+                        "ORDER BY c.id DESC",
+                null
+        );
+    }
+
+    // Contar las consultas guardadas
+    public int contarConsultas() {
+        SQLiteDatabase db = getReadableDatabase();
+
+        try (Cursor cursor = db.rawQuery(
+                "SELECT COUNT(*) FROM " + TABLE_CONSULTAS,
+                null
+        )) {
+            if (cursor.moveToFirst()) {
+                return cursor.getInt(0);
+            }
+        }
+
+        return 0;
+    }
 }

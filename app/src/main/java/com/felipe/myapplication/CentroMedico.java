@@ -1,9 +1,11 @@
+
 package com.felipe.myapplication;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class CentroMedico {
+
     private String nombre;
     private List<Empleado> personal = new ArrayList<>();
     private List<Paciente> pacientes = new ArrayList<>();
@@ -22,7 +24,21 @@ public class CentroMedico {
     }
 
     public void agendarConsulta(Consulta consulta) {
-        consultas.add(consulta);
+        if (consulta != null) {
+            consultas.add(consulta);
+        }
+    }
+
+    public List<Consulta> getConsultas() {
+        return consultas;
+    }
+
+    public List<Paciente> getPacientes() {
+        return pacientes;
+    }
+
+    public List<Empleado> getPersonal() {
+        return personal;
     }
 
     public void mostrarPersonal() {
@@ -33,7 +49,7 @@ public class CentroMedico {
     }
 
     public void mostrarPacientes() {
-        System.out.println("Pacientes registrados: ");
+        System.out.println("Pacientes registrados:");
         for (Paciente paciente : pacientes) {
             paciente.mostrarInformacion();
         }

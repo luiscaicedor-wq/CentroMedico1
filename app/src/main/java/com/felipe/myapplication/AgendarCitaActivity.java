@@ -29,7 +29,7 @@ import java.util.Locale;
 public class AgendarCitaActivity extends AppCompatActivity {
 
     public static final List<Consulta> LISTA_CONSULTAS = new ArrayList<>();
-
+    private List<Paciente> pacientesDisponibles = new ArrayList<>();
     private MaterialAutoCompleteTextView acPaciente;
     private MaterialAutoCompleteTextView acMedico;
     private TextInputLayout tilFecha;
@@ -84,26 +84,50 @@ public class AgendarCitaActivity extends AppCompatActivity {
     }
 
     private void configurarDropdowns() {
-        // Pacientes
+
+        // Cargar pacientes reales desde SQLite
+        PacienteDao pacienteDao = new PacienteDao(this);
+        pacientesDisponibles = pacienteDao.obtenerTodosLosPacientes();
+
         List<String> nombresPacientes = new ArrayList<>();
-        if (!PacientesActivity.LISTA_PACIENTES.isEmpty()) {
-            for (Paciente p : PacientesActivity.LISTA_PACIENTES) {
-                nombresPacientes.add(p.getNombre() + " " + p.getApellido() + " — " + p.getNumeroHistoria());
-            }
-        } else {
-            nombresPacientes.add("Juan Pérez — HC-2024-001");
+
+        for (Paciente p : pacientesDisponibles) {
+            nombresPacientes.add(
+                    p.getNombre() + " " + p.getApellido()
+                            + " — " + p.getNumeroHistoria()
+            );
         }
 
-        ArrayAdapter<String> adapterPaciente = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, nombresPacientes);
-        acPaciente.setAdapter(adapterPaciente);
-        acPaciente.setText(nombresPacientes.get(0), false);
+        ArrayAdapter<String> adapterPaciente = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                nombresPacientes
+        );
 
-        // Médicos
+        acPaciente.setAdapter(adapterPaciente);
+
+        if (!nombresPacientes.isEmpty()) {
+            acPaciente.setText(nombresPacientes.get(0), false);
+        } else {
+            acPaciente.setText("", false);
+            Toast.makeText(
+                    this,
+                    "Primero debes registrar un paciente",
+                    Toast.LENGTH_LONG
+            ).show();
+        }
+
+        // Médicos disponibles
         List<String> nombresMedicos = new ArrayList<>();
         nombresMedicos.add("Dra. Laura Gómez — Cardiología");
         nombresMedicos.add("Dr. Carlos Ruiz — Medicina General");
 
-        ArrayAdapter<String> adapterMedico = new ArrayAdapter<>(this, android.R.layout.simple_dropdown_item_1line, nombresMedicos);
+        ArrayAdapter<String> adapterMedico = new ArrayAdapter<>(
+                this,
+                android.R.layout.simple_dropdown_item_1line,
+                nombresMedicos
+        );
+
         acMedico.setAdapter(adapterMedico);
         acMedico.setText(nombresMedicos.get(0), false);
     }
@@ -199,23 +223,91 @@ public class AgendarCitaActivity extends AppCompatActivity {
     }
 
     private void confirmarCita() {
-        String fecha = etFecha != null && etFecha.getText() != null ? etFecha.getText().toString().trim() : "";
-        String motivo = etMotivo != null && etMotivo.getText() != null ? etMotivo.getText().toString().trim() : "";
 
-        if (TextUtils.isEmpty(fecha)) {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            fecha = sdf.format(new Date());
+        String fecha = etFecha.getText() != null
+                ? etFecha.getText().toString().trim() : "";
+
+        String motivo = etMotivo.getText() != null
+                ? etMotivo.getText().toString().trim() : "";
+
+        String medicoSeleccionado = acMedico.getText() != null
+                ? acMedico.getText().toString().trim() : "";
+
+        String pacienteSeleccionado = acPaciente.getText() != null
+                ? acPaciente.getText().toString().trim() : "";
+
+        // Validar fecha
+        if (fecha.isEmpty()) {
+            etFecha.setError("Selecciona una fecha");
+            return;
         }
-        if (TextUtils.isEmpty(motivo)) motivo = "Dolor en el pecho";
 
-        Paciente p = !PacientesActivity.LISTA_PACIENTES.isEmpty() ? PacientesActivity.LISTA_PACIENTES.get(0) : new Paciente("Juan", "Pérez", "CC", "99887766D", 55, "Colombia", 1.75, "HC-2024-001");
-        Medico m = new Medico("Laura", "Gómez", "CC", "12345678A", 42, "Colombia", 1.70, "MED-001", 4500000.0, "Cardiología", "COL-98765");
+        // Validar motivo
+        if (motivo.isEmpty()) {
+            etMotivo.setError("Escribe el motivo de la consulta");
+            etMotivo.requestFocus();
+            return;
+        }
 
-        Consulta c = new Consulta(fecha, motivo, m, p);
-        LISTA_CONSULTAS.add(c);
-        MainActivity.CENTRO_MEDICO.agendarConsulta(c);
+        // Validar médico
+        if (medicoSeleccionado.isEmpty()) {
+            acMedico.setError("Selecciona un médico");
+            return;
+        }
 
-        Toast.makeText(this, "Cita agendada exitosamente para el " + fecha, Toast.LENGTH_SHORT).show();
+        // Buscar el paciente seleccionado
+        Paciente paciente = null;
+
+        for (Paciente p : pacientesDisponibles) {
+
+            String nombreCompleto =
+                    p.getNombre() + " " + p.getApellido()
+                            + " — " + p.getNumeroHistoria();
+
+            if (nombreCompleto.equals(pacienteSeleccionado)) {
+                paciente = p;
+                break;
+            }
+        }
+
+        if (paciente == null) {
+            acPaciente.setError("Selecciona un paciente válido");
+            return;
+        }
+
+        // Validar que el médico esté en las opciones disponibles
+        if (!medicoSeleccionado.equals("Dra. Laura Gómez — Cardiología")
+                && !medicoSeleccionado.equals(
+                "Dr. Carlos Ruiz — Medicina General")) {
+            acMedico.setError("Selecciona un médico válido");
+            return;
+        }
+
+        // Guardar en SQLite
+        DatabaseHelper dbHelper = DatabaseHelper.getInstance(this);
+
+        long resultado = dbHelper.insertarConsulta(
+                fecha,
+                motivo,
+                medicoSeleccionado,
+                paciente.getId()
+        );
+
+        if (resultado == -1) {
+            Toast.makeText(
+                    this,
+                    "Error al guardar la cita",
+                    Toast.LENGTH_LONG
+            ).show();
+            return;
+        }
+
+        Toast.makeText(
+                this,
+                "Cita guardada correctamente en SQLite",
+                Toast.LENGTH_LONG
+        ).show();
+
         finish();
     }
 

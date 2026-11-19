@@ -27,7 +27,7 @@ public class RegistrarPaciente extends AppCompatActivity {
     private PacienteViewModel viewModel;
     private long pacienteIdEditar = -1;
 
-    // Centro temporal para la sesión actual de esta pantalla.
+
     private static final CentroMedico CENTRO_MEDICO = new CentroMedico("Clínica San Rafael");
 
     @Override
@@ -165,7 +165,7 @@ public class RegistrarPaciente extends AppCompatActivity {
                 finish();
             });
         } else {
-            // Crear nuevo
+
             Paciente nuevoPaciente = new Paciente(
                     nombre,
                     apellido,

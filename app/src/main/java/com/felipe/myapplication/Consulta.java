@@ -1,3 +1,4 @@
+
 package com.felipe.myapplication;
 
 public class Consulta {
@@ -14,7 +15,28 @@ public class Consulta {
         this.paciente = p;
     }
 
+    public String getFecha() {
+        return fecha;
+    }
+
+    public String getMotivo() {
+        return motivo;
+    }
+
+    public Medico getMedico() {
+        return medico;
+    }
+
+    public Paciente getPaciente() {
+        return paciente;
+    }
+
     public void realizar() {
-        System.out.println("Consulta realizada el " + fecha + " por el médico " + medico.getNombre()+ " para el paciente " + paciente.getNombre() + ". Motivo: " + motivo);
+        System.out.println(
+                "Consulta realizada el " + fecha +
+                        " por el médico " + medico.getNombre() +
+                        " para el paciente " + paciente.getNombre() +
+                        ". Motivo: " + motivo
+        );
     }
 }

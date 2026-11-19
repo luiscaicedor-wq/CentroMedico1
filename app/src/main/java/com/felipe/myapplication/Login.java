@@ -20,17 +20,18 @@ public class Login extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        sessionManager = new SessionManager(this);
-        if (sessionManager.isLoggedIn()) {
-            ingresarAApp(sessionManager.obtenerRol());
-            return;
-        }
-
         setContentView(R.layout.activity_login);
 
+        sessionManager = new SessionManager(this);
         inicializarVistas();
         configurarEventos();
+
+        if (sessionManager.isLoggedIn()) {
+            String rolGuardado = sessionManager.obtenerRol();
+            if (!TextUtils.isEmpty(rolGuardado)) {
+                navegarPorRol(rolGuardado);
+            }
+        }
     }
 
     private void inicializarVistas() {
@@ -81,7 +82,10 @@ public class Login extends AppCompatActivity {
             sessionManager = new SessionManager(this);
         }
         sessionManager.guardarSesion(usuario, rolSeleccionado);
+        navegarPorRol(rolSeleccionado);
+    }
 
+    private void navegarPorRol(String rolSeleccionado) {
         Intent intent;
         if ("Administrativos".equalsIgnoreCase(rolSeleccionado) || "Administrativo".equalsIgnoreCase(rolSeleccionado)) {
             intent = new Intent(Login.this, AdminInicioActivity.class);
@@ -90,7 +94,7 @@ public class Login extends AppCompatActivity {
         } else if ("Médicos".equalsIgnoreCase(rolSeleccionado) || "Médico".equalsIgnoreCase(rolSeleccionado)) {
             intent = new Intent(Login.this, MedicoInicioActivity.class);
         } else {
-            intent = new Intent(Login.this, MainActivity.class);
+            intent = new Intent(Login.this, AdminInicioActivity.class);
         }
         intent.putExtra("ROL_SELECCIONADO", rolSeleccionado);
         startActivity(intent);
