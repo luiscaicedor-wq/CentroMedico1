@@ -9,4 +9,10 @@
     <string name="btn_cancelar">Cancelar</string>
     <string name="btn_eliminar">Eliminar</string>
     <string name="btn_editar">Editar</string>
+    <string name="citas_registradas">Citas registradas (toca una para eliminarla)</string>
+    <string name="citas_vacias">Todavía no hay citas registradas.</string>
+    <string name="citas_error">No se pudo completar la operación. Inténtalo de nuevo.</string>
+    <string name="cita_guardada">Cita guardada correctamente en SQLite.</string>
+    <string name="eliminar_cita_titulo">Eliminar cita</string>
+    <string name="eliminar_cita_mensaje">¿Eliminar la cita de %1$s del %2$s?</string>
 </resources>

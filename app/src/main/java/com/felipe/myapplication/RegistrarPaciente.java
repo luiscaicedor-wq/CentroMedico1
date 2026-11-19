@@ -124,6 +124,12 @@ public class RegistrarPaciente extends AppCompatActivity {
             return;
         }
 
+        if (dni.length() < 5) {
+            etDni.setError("El documento debe tener al menos 5 caracteres");
+            etDni.requestFocus();
+            return;
+        }
+
         if (TextUtils.isEmpty(numeroHistoria)) {
             etNumeroHistoria.setError("Ingrese el número de historia");
             etNumeroHistoria.requestFocus();
@@ -160,6 +166,12 @@ public class RegistrarPaciente extends AppCompatActivity {
             );
 
             viewModel.actualizarPaciente(pacienteEditado, filas -> {
+                if (filas <= 0) {
+                    etDni.setError("Comprueba que el documento no esté duplicado");
+                    etNumeroHistoria.setError("Comprueba que la historia clínica no esté duplicada");
+                    Toast.makeText(this, "No se pudo actualizar: documento o historia clínica duplicados, o error de guardado.", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 Toast.makeText(this, "Paciente actualizado correctamente", Toast.LENGTH_SHORT).show();
                 setResult(RESULT_OK);
                 finish();
@@ -177,13 +189,14 @@ public class RegistrarPaciente extends AppCompatActivity {
                     numeroHistoria
             );
 
-            CENTRO_MEDICO.registrarPaciente(nuevoPaciente);
-            MainActivity.CENTRO_MEDICO.registrarPaciente(nuevoPaciente);
-
             viewModel.insertPaciente(nuevoPaciente, id -> {
+                if (id == -1) {
+                    etDni.setError("Revisa si este documento ya está registrado");
+                    etNumeroHistoria.setError("Revisa si esta historia clínica ya existe");
+                    Toast.makeText(this, "No se registró el paciente. Comprueba documento e historia clínica: no pueden repetirse.", Toast.LENGTH_LONG).show();
+                    return;
+                }
                 nuevoPaciente.setId(id);
-                PacientesActivity.LISTA_PACIENTES.add(nuevoPaciente);
-
                 Toast.makeText(this, "Paciente registrado correctamente", Toast.LENGTH_SHORT).show();
 
                 Intent intent = new Intent(this, PacientesActivity.class);

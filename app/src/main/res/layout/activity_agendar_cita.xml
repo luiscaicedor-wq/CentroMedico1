@@ -7,7 +7,7 @@
     android:layout_height="match_parent"
     android:background="@color/cm_fondo"
     android:orientation="vertical"
-    tools:context=".MainActivity">
+    tools:context=".AgendarCitaActivity">
     <com.google.android.material.appbar.MaterialToolbar android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
@@ -123,6 +123,19 @@
                     android:layout_height="56dp"
                     android:text="Confirmar cita"
                     app:icon="@drawable/ic_check" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:paddingTop="16dp"
+                    android:text="@string/citas_registradas"
+                    android:textStyle="bold"
+                    android:textSize="18sp" />
+                <LinearLayout
+                    android:id="@+id/listaCitas"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical" />
             </LinearLayout>
         </androidx.core.widget.NestedScrollView>
     </FrameLayout>

@@ -32,45 +32,66 @@ public class PacienteRepository {
 
     public void insertPaciente(Paciente p, RepositoryCallback<Long> callback) {
         executor.execute(() -> {
-            long result = pacienteDao.insertPaciente(p);
+            long result;
+            try { result = pacienteDao.insertPaciente(p); }
+            catch (RuntimeException ex) { android.util.Log.e("PacienteRepository", "Error al insertar", ex); result = -1; }
             if (callback != null) {
-                mainHandler.post(() -> callback.onComplete(result));
+                final long resultadoFinal = result;
+                mainHandler.post(() -> callback.onComplete(resultadoFinal));
             }
         });
     }
 
     public void obtenerTodosLosPacientes(RepositoryCallback<List<Paciente>> callback) {
         executor.execute(() -> {
-            List<Paciente> result = pacienteDao.obtenerTodosLosPacientes();
+            List<Paciente> result;
+            try { result = pacienteDao.obtenerTodosLosPacientes(); }
+            catch (RuntimeException ex) {
+                android.util.Log.e("PacienteRepository", "Error al listar", ex);
+                result = null;
+            }
+            final List<Paciente> resultadoFinal = result;
             if (callback != null) {
-                mainHandler.post(() -> callback.onComplete(result));
+                mainHandler.post(() -> callback.onComplete(resultadoFinal));
             }
         });
     }
 
     public void obtenerPacientePorId(long id, RepositoryCallback<Paciente> callback) {
         executor.execute(() -> {
-            Paciente result = pacienteDao.obtenerPacientePorId(id);
+            Paciente result;
+            try { result = pacienteDao.obtenerPacientePorId(id); }
+            catch (RuntimeException ex) {
+                android.util.Log.e("PacienteRepository", "Error al buscar paciente", ex);
+                result = null;
+            }
+            final Paciente resultadoFinal = result;
             if (callback != null) {
-                mainHandler.post(() -> callback.onComplete(result));
+                mainHandler.post(() -> callback.onComplete(resultadoFinal));
             }
         });
     }
 
     public void actualizarPaciente(Paciente p, RepositoryCallback<Integer> callback) {
         executor.execute(() -> {
-            int result = pacienteDao.actualizarPaciente(p);
+            int result;
+            try { result = pacienteDao.actualizarPaciente(p); }
+            catch (RuntimeException ex) { android.util.Log.e("PacienteRepository", "Error al actualizar", ex); result = -1; }
             if (callback != null) {
-                mainHandler.post(() -> callback.onComplete(result));
+                final int resultadoFinal = result;
+                mainHandler.post(() -> callback.onComplete(resultadoFinal));
             }
         });
     }
 
     public void eliminarPaciente(long id, RepositoryCallback<Integer> callback) {
         executor.execute(() -> {
-            int result = pacienteDao.eliminarPaciente(id);
+            int result;
+            try { result = pacienteDao.eliminarPaciente(id); }
+            catch (RuntimeException ex) { android.util.Log.e("PacienteRepository", "Error al eliminar", ex); result = -1; }
             if (callback != null) {
-                mainHandler.post(() -> callback.onComplete(result));
+                final int resultadoFinal = result;
+                mainHandler.post(() -> callback.onComplete(resultadoFinal));
             }
         });
     }

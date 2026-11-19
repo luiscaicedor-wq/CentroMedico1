@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.appbar.MaterialToolbar;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -13,6 +14,8 @@ import com.google.android.material.bottomnavigation.BottomNavigationView;
 public class AdminInicioActivity extends AppCompatActivity {
 
     private MaterialToolbar toolbar;
+    private PacienteViewModel pacienteViewModel;
+    private ConsultaViewModel consultaViewModel;
     private View cardRegistrarPaciente;
     private View cardAgendarCita;
     private View cardVerPacientes;
@@ -30,6 +33,16 @@ public class AdminInicioActivity extends AppCompatActivity {
         setContentView(R.layout.activity_admin_inicio);
 
         inicializarVistas();
+        pacienteViewModel = new ViewModelProvider(this).get(PacienteViewModel.class);
+        consultaViewModel = new ViewModelProvider(this).get(ConsultaViewModel.class);
+        pacienteViewModel.getPacientes().observe(this, pacientes -> {
+            if (tvTotalPacientes != null && pacientes != null)
+                tvTotalPacientes.setText(String.valueOf(pacientes.size()));
+        });
+        consultaViewModel.getTotal().observe(this, total -> {
+            if (tvTotalConsultas != null && total != null)
+                tvTotalConsultas.setText(total < 0 ? "—" : String.valueOf(total));
+        });
         configurarEventos();
         configurarBottomNav();
     }
@@ -122,17 +135,8 @@ public class AdminInicioActivity extends AppCompatActivity {
     }
 
     private void actualizarMetricas() {
-        int totalPacientes = PacientesActivity.LISTA_PACIENTES.size();
-        int totalConsultas = AgendarCitaActivity.LISTA_CONSULTAS.size();
-
-        if (tvTotalPacientes != null) {
-            tvTotalPacientes.setText(String.valueOf(totalPacientes));
-        }
-        if (tvTotalConsultas != null) {
-            tvTotalConsultas.setText(String.valueOf(totalConsultas));
-        }
-        if (tvTotalEmpleados != null) {
-            tvTotalEmpleados.setText("3");
-        }
+        pacienteViewModel.cargarPacientes();
+        consultaViewModel.cargar();
+        if (tvTotalEmpleados != null) tvTotalEmpleados.setText("3");
     }
 }

@@ -26,13 +26,6 @@ public class PacientesActivity extends AppCompatActivity {
 
     public static final List<Paciente> LISTA_PACIENTES = new ArrayList<>();
 
-    static {
-        if (LISTA_PACIENTES.isEmpty()) {
-            Paciente p1 = new Paciente("Juan", "Pérez", "CC", "99887766D", 55, "Colombia", 1.75, "HC-2024-001");
-            LISTA_PACIENTES.add(p1);
-        }
-    }
-
     private MaterialToolbar toolbar;
     private TextInputEditText etBuscarPaciente;
     private RecyclerView rvPacientes;
@@ -133,12 +126,16 @@ public class PacientesActivity extends AppCompatActivity {
         if (paciente == null) return;
         new MaterialAlertDialogBuilder(this)
                 .setTitle("Eliminar Paciente")
-                .setMessage("¿Estás seguro de que deseas eliminar a " + paciente.getNombre() + " " + paciente.getApellido() + "?")
+                .setMessage("¿Eliminar a " + paciente.getNombre() + " " + paciente.getApellido() + "? También se eliminarán sus citas asociadas.")
                 .setPositiveButton("Eliminar", (dialog, which) -> {
                     if (viewModel != null) {
                         viewModel.eliminarPaciente(paciente.getId(), count -> {
-                            Toast.makeText(this, "Paciente eliminado", Toast.LENGTH_SHORT).show();
-                            viewModel.cargarPacientes();
+                            if (count > 0) {
+                                Toast.makeText(this, "Paciente eliminado", Toast.LENGTH_SHORT).show();
+                                viewModel.cargarPacientes();
+                            } else {
+                                Toast.makeText(this, "No se pudo eliminar el paciente. Inténtalo nuevamente.", Toast.LENGTH_LONG).show();
+                            }
                         });
                     }
                 })
